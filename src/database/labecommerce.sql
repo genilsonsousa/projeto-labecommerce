@@ -1,4 +1,5 @@
--- Active: 1680020986317@@127.0.0.1@3306
+-- Active: 1680214597313@@127.0.0.1@3306
+
 CREATE TABLE users (
      id TEXT PRIMARY KEY UNIQUE NOT NULL,
      email TEXT  UNIQUE NOT NULL,
@@ -40,3 +41,34 @@ INSERT INTO products VALUES
 ("024", "pulseira", 20.00, "ACCESSORIES");
 
 SELECT * FROM products;
+
+SELECT (name) FROM products;
+
+SELECT * FROM products WHERE name LIKE "%relogio%";
+
+INSERT INTO users VALUES("11", "fefe@email.com", "745362859");
+
+INSERT INTO products VALUES("768","anel", 30.00, "ACCESSORIES");
+
+SELECT * FROM products WHERE id="034";
+
+DELETE FROM users WHERE id="11";
+
+DELETE FROM products WHERE id="768";
+
+UPDATE users 
+SET
+ id="11" 
+  WHERE id="10";
+
+UPDATE products
+SET
+ price=100.00 
+  WHERE id="078";
+
+SELECT * FROM users ORDER BY email ASC;
+SELECT * FROM products ORDER BY price ASC LIMIT 20 OFFSET 0;
+
+-- SELECT * FROM products WHERE price BETWEEN 18.00 AND 58.00 ORDER BY price ASC; --não funcionou , o AND não roda , so o OR
+SELECT * FROM products WHERE price>=18.00 AND price<=58.00 ORDER BY price ASC; --não funcionou , o AND não roda , so o OR
+
