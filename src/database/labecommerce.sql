@@ -72,3 +72,26 @@ SELECT * FROM products ORDER BY price ASC LIMIT 20 OFFSET 0;
 -- SELECT * FROM products WHERE price BETWEEN 18.00 AND 58.00 ORDER BY price ASC; --não funcionou , o AND não roda , so o OR
 SELECT * FROM products WHERE price>=18.00 AND price<=58.00 ORDER BY price ASC; --não funcionou , o AND não roda , so o OR
 
+CREATE Table purchasess (
+  id TEXT PRIMARY KEY UNIQUE NOT NULL,
+ total_price REAL NOT NULL,
+ paid INTEGER NOT NULL,
+ delivered_at TEXT ,
+ buyer_id TEXT NOT NULL,
+ FOREIGN KEY (buyer_id) REFERENCES users (id) 
+);
+
+INSERT INTO purchasess (id,total_price,paid,delivered_at, buyer_id) VALUES
+("c001", 29.0, 1,NULL, "01" ),
+("c002", 39.0, 1,NULL, "01" ),
+("c003", 50.0, 0,NULL, "02" ),
+("c004", 79.0, 1,NULL, "02" );
+
+UPDATE purchasess SET delivered_at= DATETIME("2023-04-04 10:24:00") WHERE id="c004";
+
+SELECT * FROM purchasess;
+
+SELECT p.id, p.total_price, p.paid, p.delivered_at, p.buyer_id, u.id, u.email 
+FROM purchasess AS p 
+INNER JOIN users AS u
+ON u.id=p.buyer_id;
