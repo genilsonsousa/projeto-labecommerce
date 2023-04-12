@@ -2,24 +2,25 @@
 
 CREATE TABLE users (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    name TEXT NOT NULL,
     email TEXT  UNIQUE NOT NULL,
     password TEXT  NOT NULL,
-    create_at TEXT NOT NULL 
+    create_at TEXT NOT NULL DEFAULT(DATETIME('now', 'localtime'))
 );
 
    DROP TABLE users;   
 
-INSERT INTO users VALUES 
-( "01","joana@email.com","123456","2023-04-04 10:24:00"),
-( "02","maria@email.com","123465","2023-04-04 10:24:00"),
-( "03","joao@email.com","124356", "2023-04-04 10:24:00"),
-( "04","matheus@email.com","213456", "2023-04-04 10:24:00"),
-( "05","luana@email.com","123056", "2023-04-04 10:24:00"),
-( "06","fernando@email.com","923456", "2023-04-04 10:24:00"),
-( "07","lucas@email.com","773456", "2023-04-04 10:24:00"),
-( "08","ana@email.com","1255456", "2023-04-04 10:24:00"),
-( "09","juju@email.com","623456", "2023-04-04 10:24:00"),
-( "10","flavia@email.com","113456", "2023-04-04 10:24:00");
+INSERT INTO users (id,name,email,password) VALUES 
+( "01","joana","joana@email.com","123456"),
+( "02","maria","maria@email.com","123465"),
+( "03","joao","joao@email.com","124356"),
+( "04","matheus","matheus@email.com","213456"),
+( "05","luana","luana@email.com","123056"),
+( "06","fernando","fernando@email.com","923456"),
+( "07","lucas","lucas@email.com","773456"),
+( "08","ana","ana@email.com","1255456"),
+( "09","juju","juju@email.com","623456"),
+( "10","flavia","flavia@email.com","113456");
 
 SELECT * FROM users;
 
@@ -81,24 +82,24 @@ SELECT * FROM products WHERE price>=18.00 AND price<=58.00 ORDER BY price ASC; -
 CREATE Table purchasess (
   id TEXT PRIMARY KEY UNIQUE NOT NULL,
  total_price REAL NOT NULL,
- paid INTEGER NOT NULL,
- create_at TEXT NOT NULL ,
+ paid INTEGER NOT NULL DEFAULT(0),
+ create_at TEXT NOT NULL DEFAULT(DATETIME('now', 'localtime')),
  buyer_id TEXT NOT NULL,
  FOREIGN KEY (buyer_id) REFERENCES users (id) 
 );
 
 DROP TABLE purchasess;
 
-INSERT INTO purchasess (id,total_price,paid,create_at, buyer_id) VALUES
-("c001", 29.0, 0,"2023-04-04 10:24:00", "01" ),
-("c002", 39.0,1,"2023-04-04 10:24:00", "02" ),
-("c003", 50.0,0,"2023-04-04 10:24:00", "03" ),
-("c004", 79.0,1,"2023-04-04 10:24:00", "04" );
+INSERT INTO purchasess (id,total_price,paid, buyer_id) VALUES
+("c001", 29.0, 0, "01" ),
+("c002", 39.0,1, "02" ),
+("c003", 50.0,0, "03" ),
+("c004", 79.0,1, "04" );
 
-UPDATE purchasess SET delivered_at= DATETIME("2023-04-04 10:24:00") WHERE id="c004";
-UPDATE purchasess SET delivered_at= DATETIME("2023-04-04 10:24:00") WHERE id="c003";
-UPDATE purchasess SET delivered_at= DATETIME("2023-04-04 10:24:00") WHERE id="c002";
-UPDATE purchasess SET delivered_at= DATETIME("2023-04-04 10:24:00") WHERE id="c001";
+UPDATE purchasess SET delivered_at= DATETIME) WHERE id="c004";
+UPDATE purchasess SET delivered_at= DATETIME) WHERE id="c003";
+UPDATE purchasess SET delivered_at= DATETIME) WHERE id="c002";
+UPDATE purchasess SET delivered_at= DATETIME) WHERE id="c001";
 
 
 SELECT * FROM purchasess;
