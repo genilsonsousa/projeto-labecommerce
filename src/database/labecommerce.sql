@@ -121,9 +121,7 @@ CREATE TABLE purchases_products (
 DROP TABLE purchases_products;
 
 INSERT INTO purchases_products(purchase_id , product_id, quantity) VALUES
-("c001","088", 2),
-("c002","018", 1),
-("c003","024", 2);
+("c001","018", 1);
 
 SELECT * FROM purchases_products;
 
@@ -134,6 +132,6 @@ products.price AS "preço do produto",
 purchasess.id AS "id da compra" , 
 purchasess.total_price AS "total da compra " 
 FROM purchases_products
-INNER JOIN purchasess ON purchases_products.purchase_id=purchasess.id
-INNER JOIN products ON purchases_products.product_id=products.id;
+INNER JOIN products ON purchases_products.product_id=products.id
+WHERE purchases_products.purchase_id=
 

@@ -20,7 +20,9 @@ app.get("/ping", (req: Request, res: Response) => {
 //getAllUsers
 app.get("/users", async (req: Request, res: Response) => {
   try {
-    const result = await db.raw(`SELECT * FROM users;`);
+    // const result = await db.raw(`SELECT * FROM users;`);
+   
+   const result= await db("users")
     res.status(200).send(result);
   } catch (error) {
     console.log(error);
@@ -38,8 +40,8 @@ app.get("/users", async (req: Request, res: Response) => {
 //getAllProducts
 app.get("/products", async (req: Request, res: Response) => {
   try {
-    const result = await db.raw(`SELECT * FROM products;`);
-
+    // const result = await db.raw(`SELECT * FROM products;`);
+   const result= await db("products")
     res.status(200).send(result);
   } catch (err) {
     console.log(err);
@@ -59,19 +61,13 @@ app.get("/products/search", async (req: Request, res: Response) => {
   try {
     const name = req.query.name as string;
 
-    if (name !== undefined) {
-      if (name.length < 1) {
+    const [filterProduct]= await db.select("*").from("products").where({name:name})
+
+    if (!name) {
         res.status(404);
         throw new Error("query params deve possuir pelo menos um caractere");
-      }
+      
     }
-
-    const filterProduct = await db.raw(`
-    SELECT * FROM products
-    WHERE name LIKE "%${name}%";
-    `);
-
-    console.log(filterProduct);
 
     res.status(200).send(filterProduct);
   } catch (err) {
@@ -352,7 +348,7 @@ app.put("/users/:id", (req: Request, res: Response) => {
 });
 
 // Edit Product by id
-app.put("/products/:id", (req: Request, res: Response) => {
+app.put("/products/:id",async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
 
@@ -395,3 +391,150 @@ app.put("/products/:id", (req: Request, res: Response) => {
     res.send(err.message);
   }
 });
+
+app.get("/purchases/:id",async (req: Request , res: Response )=>{
+
+try{
+
+  const idPurchases= req.params.id as string;
+  console.log(idPurchases)
+
+  const [filterPurchases]= await db.select("*").from("purchasess").where({id:idPurchases}) 
+
+  console.log(filterPurchases)
+
+ if(!filterPurchases){
+  res.status(404);
+  throw new Error("id não encontrado")
+ }
+
+ const purchaseUsers= await db("purchasess")
+ .select(
+     "purchasess.id AS idDaCompra",
+     "purchasess.total_price AS valorDaCompra",
+     "purchasess.create_at AS criadaEm",
+     "purchasess.paid AS status",
+     "users.id AS idDoComprador",
+     "users.email AS emailComprador",
+     "users.name AS nomeDoComprador",
+ )
+//  .from("purchasess")
+ .innerJoin(
+     "users",
+     "purchasess.buyer_id",
+     "=",
+     "users.id"
+
+ )
+ .where({"purchasess.id":idPurchases})
+
+
+ const productByPurchases= await db("purchases_products")
+ .select(
+ "products.id  AS idProduto",
+"products.name AS nomaProduto" ,
+"products.price AS preçoProduto",
+"products.description ",
+"products.image_url ",
+"purchases_products.quantity"
+
+ )
+ .innerJoin(
+  "products",
+  "purchases_products.product_id",
+  "=",
+  "products.id"
+ )
+.where({"purchases_products.purchase_id":idPurchases})
+
+
+const result= {...purchaseUsers[0],paid:purchaseUsers[0].paid===0? false:true,  productList:productByPurchases}
+
+
+
+res.status(200).send(result);
+  
+}catch(err){
+  if (res.statusCode === 200) {
+    res.status(500);
+  }
+
+  res.send(err.message);
+}
+
+})
+
+
+
+app.get("/products/:id", async(req: Request, res:Response)=>{
+  try{
+
+    const idParams= req.params.id
+
+    const [filterProduct]= await db.select("*").from("products").where({id:idParams}) 
+
+
+
+    if(!filterProduct){
+      res.status(404);
+      throw new Error("id não encontrado")
+     }
+    
+     const result= await db("purchasess")
+     .select(
+      "purchasess.id",
+      "products.id",
+      "products.name",
+      "products.description",
+      "products.image_url ",  
+     )
+    //  .from("purchasess")
+     .innerJoin(
+         "products",
+         "purchasess.buyer_id",
+         "=",
+         "products.id"
+    
+     )
+     .where({"purchasess.id":idParams})
+    
+    res.status(200).send(result)
+
+  }catch(err:any){
+
+    if (res.statusCode === 200) {
+      res.status(500);
+    }
+    res.send(err.message);
+  }
+
+
+  })
+
+const compra =[
+  {
+    idCompra: "01",
+    idProduto:"01"
+    
+  },
+  {
+    idCompra: "01",
+    idProduto:"02"
+    
+  },
+  {
+    idCompra: "01",
+    idProduto:"03"
+    
+  }
+
+]
+
+const produto =
+  {
+    idProduto:"031"
+    
+  }
+ 
+
+
