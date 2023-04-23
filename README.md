@@ -13,7 +13,7 @@
 
 # Banco de dados
 ![image](https://user-images.githubusercontent.com/29845719/214396608-ddcfd097-e615-44f9-acbe-f815f9abb83f.png)
-https://dbdiagram.io/d/63c6e8e5296d97641d7a4666
+
 
 # Lista de requisitos
 
