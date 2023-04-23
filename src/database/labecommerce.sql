@@ -85,7 +85,7 @@ CREATE Table purchasess (
  paid INTEGER NOT NULL DEFAULT(0),
  create_at TEXT NOT NULL DEFAULT(DATETIME('now', 'localtime')),
  buyer_id TEXT NOT NULL,
- FOREIGN KEY (buyer_id) REFERENCES users (id) 
+ FOREIGN KEY (buyer_id) REFERENCES users (id) ON UPDATE CASCADE
 );
 
 DROP TABLE purchasess;
@@ -115,13 +115,15 @@ CREATE TABLE purchases_products (
   product_id TEXT NOT NULL,
   quantity INTEGER NOT NULL DEFAULT(1),
   FOREIGN KEY (purchase_id) REFERENCES purchasess(id),
-  FOREIGN KEY (product_id) REFERENCES products(id)
+  FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE
 );
 
 DROP TABLE purchases_products;
 
 INSERT INTO purchases_products(purchase_id , product_id, quantity) VALUES
-("c001","018", 1);
+("c001","018", 1),
+("c002","028", 1),
+("c003","038", 1);
 
 SELECT * FROM purchases_products;
 

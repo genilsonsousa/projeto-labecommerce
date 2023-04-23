@@ -8,8 +8,10 @@ export enum CATEGORIAS{
 
   export type User ={
     id : string,
+    name: string,
     email: string,
-    password: string
+    password: string,
+    create_at: string
  
   }
 
@@ -18,7 +20,8 @@ export enum CATEGORIAS{
       id : string,
       name: string,
       price: number,
-      category: CATEGORIAS
+      description:string,
+      image_url:string
     }
 
   //   compra realizada por cliente
@@ -28,5 +31,13 @@ export enum CATEGORIAS{
       quantity: number,
       totalPrice: string
     }
+
+    export type TPurchasekWithUsers = {
+      userId : string,
+      productId: string,
+      quantity: number,
+      totalPrice: string
+      responsibles: User[]
+  }
 
 
