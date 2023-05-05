@@ -129,4 +129,4 @@ purchasess.id AS "id da compra" ,
 purchasess.total_price AS "total da compra " 
 FROM purchases_products
 INNER JOIN products ON purchases_products.product_id=products.id
-WHERE purchases_products.purchase_id=
+WHERE purchases_products.purchase_id=;
