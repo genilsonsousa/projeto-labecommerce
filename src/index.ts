@@ -38,6 +38,23 @@ app.get("/users", async (req: Request, res: Response) => {
     }
   }
 });
+app.get("/purchasess", async (req: Request, res: Response) => {
+  try {
+    const result = await db("purchasess");
+    res.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    if (res.statusCode === 200) {
+      res.status(500);
+    }
+
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Error inesperado");
+    }
+  }
+});
 //getAllProducts
 app.get("/products", async (req: Request, res: Response) => {
   try {
@@ -269,11 +286,6 @@ app.post("/purchasess", async (req: Request, res: Response) => {
         res.status(400);
         throw new Error("'buyer_id' deve ser string");
       }
-
-      if (buyer_id.length > 2) {
-        res.status(400);
-        throw new Error("'buyer_id' deve possuir pelo menos 2 caracteres");
-      }
     }
 
     if (total_price !== undefined) {
@@ -422,9 +434,10 @@ app.delete("/users/:id",async (req: Request, res: Response) => {
       throw new Error("'id' não encontrado");
 
     }
-
-    await db("purchasess").del().where({buyer_id:idToDelete })
-    await db("users").del().where({ id: idToDelete })
+    await db("purchasess").where({buyer_id:idToDelete }).del()
+     await db("users").where({ id: idToDelete }).del()
+  
+   
     res.status(200).send("user deletado com sucesso")
 
 
