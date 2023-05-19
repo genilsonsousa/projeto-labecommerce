@@ -335,19 +335,46 @@ app.post("/purchases", async (req: Request, res: Response) => {
   }
 });
 
+
 //  -----------APROFUNDANDO-EXPRESS
 
 // Get Products by id
-app.get("/products/:id", async (req: Request, res: Response) => {
+app.get("/purchases/:id", async (req: Request, res: Response) => {
   try {
-    const idToProduct = req.params.id as string;
+    const idPurchases = req.params.id as string;
+    console.log(idPurchases);
 
-    if (!idToProduct) {
+    const [filterPurchases] = await db
+      .select("*")
+      .from("purchases")
+      .where({ id: idPurchases });
+
+    console.log(filterPurchases);
+
+    if (!filterPurchases) {
       res.status(404);
-      throw new Error("produto não encontrado");
+      throw new Error("id não encontrado");
     }
 
-    const result = await db("products").where({ id: idToProduct });
+    const purchaseUsers = await db("purchases")
+      .select(
+        "purchases.id AS idDaCompra",
+        "purchases.total_price AS valorDaCompra",
+        "purchases.create_at AS criadaEm",
+        "purchases.paid AS status",
+        "users.id AS idDoComprador",
+        "users.email AS emailComprador",
+        "users.name AS nomeDoComprador"
+      )
+      //  .from("purchases")
+      .innerJoin("users", "purchases.buyer_id", "=", "users.id")
+      .where({ "purchases.id": idPurchases });
+
+
+    const result = {
+      ...purchaseUsers[0],
+      paid: purchaseUsers[0].paid === 0 ? false : true,
+    };
 
     res.status(200).send(result);
   } catch (err) {
@@ -428,7 +455,6 @@ app.delete("/users/:id",async (req: Request, res: Response) => {
     res.status(200).send("user deletado com sucesso")
 
 
-
   } catch (err) {
     console.log(err);
     if (res.statusCode === 200) {
@@ -444,7 +470,7 @@ app.delete("/users/:id",async (req: Request, res: Response) => {
   
 });
 
-app.delete("/products/:id",async (req: Request, res: Response) => {
+app.delete("/purchases/:id",async (req: Request, res: Response) => {
   try {
     const idToDelete = req.params.id as string;
  
@@ -455,17 +481,17 @@ app.delete("/products/:id",async (req: Request, res: Response) => {
       }
     }
 
-    const [product]= await db("products").where({id:idToDelete})
+    const [purchase]= await db("purchases").where({id:idToDelete})
 
-    if(!product){
+    if(!purchase){
       res.status(404);
       throw new Error("'id' não encontrado");
 
     }
 
-    await db("purchases_products").del().where({product_id:idToDelete })
-    await db("products").del().where({ id: idToDelete })
-    res.status(200).send("product deletado com sucesso")
+    await db("users").del().where({id:idToDelete })
+    await db("purchases").where({ id: idToDelete }).del()
+    res.status(200).send("compra deletada com sucesso")
 
 
   } catch (err) {
@@ -744,33 +770,24 @@ app.get("/purchases/:id", async (req: Request, res: Response) => {
 
 app.get("/products/:id", async (req: Request, res: Response) => {
   try {
-    const idParams = req.params.id;
+    const idToProduct = req.params.id as string;
 
-    const [filterProduct] = await db("products").where({ id: idParams });
-
-    if (!filterProduct) {
+    if (!idToProduct) {
       res.status(404);
-      throw new Error("id não encontrado");
+      throw new Error("produto não encontrado");
     }
 
-    const result = await db("purchases")
-      .select(
-        "purchases.id",
-        "products.id",
-        "products.name",
-        "products.description",
-        "products.image_url "
-      )
-      .innerJoin("products", "purchases.buyer_id", "=", "products.id")
-      .where({ "purchases.id": idParams });
+    const result = await db("products").where({ id: idToProduct });
 
     res.status(200).send(result);
   } catch (err: any) {
     console.log(err);
+
     if (res.statusCode === 200) {
       res.status(500);
     }
-
+    
+    
     if (err instanceof Error) {
       res.send(err.message);
     } else {
